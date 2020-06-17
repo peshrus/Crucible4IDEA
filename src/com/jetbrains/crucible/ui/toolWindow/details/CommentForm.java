@@ -1,6 +1,5 @@
 package com.jetbrains.crucible.ui.toolWindow.details;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SpellCheckingEditorCustomizationProvider;
@@ -58,7 +57,7 @@ public class CommentForm extends JPanel {
     myReply = isReply;
     myFilePath = filePath;
 
-    final EditorTextFieldProvider service = ServiceManager.getService(project, EditorTextFieldProvider.class);
+    final EditorTextFieldProvider service = EditorTextFieldProvider.getInstance();
     final Set<EditorCustomization> editorFeatures =
       ContainerUtil.newHashSet(SoftWrapsEditorCustomization.ENABLED,
                                SpellCheckingEditorCustomizationProvider.getInstance().getEnabledCustomization());
