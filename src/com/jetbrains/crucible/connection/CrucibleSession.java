@@ -34,7 +34,7 @@ public interface CrucibleSession {
 
   List<BasicReview> getReviewsForFilter(@NotNull final CrucibleFilter filter) throws IOException;
 
-  String downloadFile(@NotNull String relativeUrl) throws IOException;
+  String downloadFile(@NotNull String relativeUrl);
 
   Review getDetailsForReview(@NotNull final String permId) throws IOException;
 

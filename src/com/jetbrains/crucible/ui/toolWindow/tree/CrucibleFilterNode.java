@@ -24,6 +24,7 @@ public class CrucibleFilterNode extends SimpleNode {
     return myFilter.getFilterName();
   }
 
+  @NotNull
   @Override
   public SimpleNode[] getChildren() {
     return new SimpleNode[0];

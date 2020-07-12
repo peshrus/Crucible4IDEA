@@ -21,10 +21,10 @@ import java.util.Set;
  */
 public class ReviewItem {
 
-  private String myId;
-  private String myPath;
-  private String myRepo;
-  private Set<String> myRevisions = new HashSet<String>();
+  private final String myId;
+  private final String myPath;
+  private final String myRepo;
+  private final Set<String> myRevisions = new HashSet<>();
 
   public ReviewItem(@NotNull final String id, @NotNull final String path, @Nullable final String repo) {
     myId = id;
@@ -36,7 +36,7 @@ public class ReviewItem {
   public List<CommittedChangeList> loadChangeLists(@NotNull Project project, @NotNull AbstractVcs vcsFor,
                                                    @NotNull Set<String> loadedRevisions, FilePath path) throws VcsException {
     final Set<String> revisions = getRevisions();
-    List<CommittedChangeList> changeLists = new ArrayList<CommittedChangeList>();
+    List<CommittedChangeList> changeLists = new ArrayList<>();
     for (String revision : revisions) {
       if (!loadedRevisions.contains(revision)) {
         final VcsRevisionNumber revisionNumber = vcsFor.parseRevisionNumber(revision);

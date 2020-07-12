@@ -79,16 +79,13 @@ public class CruciblePanel extends SimpleToolWindowPanel {
         if (e.getClickCount() == 2) {
           final int viewRow = myReviewTable.getSelectedRow();
           if (viewRow >= 0 &&  viewRow < myReviewTable.getRowCount()) {
-            ApplicationManager.getApplication().invokeLater(new Runnable() {
-              @Override
-              public void run() {
-                final Review review =
-                  CrucibleManager.getInstance(myProject).getDetailsForReview((String)myReviewTable.
-                    getValueAt(viewRow, myReviewTable.getColumnModel().getColumnIndex(CrucibleBundle.message("crucible.id"))));
-                if (review != null) {
-                  openDetailsToolWindow(review);
-                  myReviewTable.clearSelection();
-                }
+            ApplicationManager.getApplication().invokeLater(() -> {
+              final Review review =
+                CrucibleManager.getInstance(myProject).getDetailsForReview((String)myReviewTable.
+                  getValueAt(viewRow, myReviewTable.getColumnModel().getColumnIndex(CrucibleBundle.message("crucible.id"))));
+              if (review != null) {
+                openDetailsToolWindow(review);
+                myReviewTable.clearSelection();
               }
             }, ModalityState.stateForComponent(myReviewTable));
 
@@ -96,7 +93,7 @@ public class CruciblePanel extends SimpleToolWindowPanel {
         }
     }});
 
-    final TableRowSorter<TableModel> rowSorter = new TableRowSorter<TableModel>(myReviewModel);
+    final TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(myReviewModel);
     rowSorter.setSortKeys(Collections.singletonList(new RowSorter.SortKey(4, SortOrder.ASCENDING)));
     rowSorter.sort();
     myReviewTable.setRowSorter(rowSorter);
@@ -131,7 +128,7 @@ public class CruciblePanel extends SimpleToolWindowPanel {
 
   public void openDetailsToolWindow(@NotNull final Review review) {
     final ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(CrucibleBundle.message("crucible.toolwindow.id"));
-    final ContentManager contentManager = toolWindow.getContentManager();
+    final ContentManager contentManager = Objects.requireNonNull(toolWindow).getContentManager();
     final Content foundContent = contentManager.findContent("Details for " + review.getPermaId());
     if (foundContent != null) {
       contentManager.setSelectedContent(foundContent);
@@ -145,31 +142,28 @@ public class CruciblePanel extends SimpleToolWindowPanel {
     contentManager.setSelectedContent(content);
     details.setBusy(true);
 
-    ApplicationManager.getApplication().invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        final List<CommittedChangeList> list = new ArrayList<CommittedChangeList>();
-        final ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(myProject);
-        final String projectDir = myProject.getBasePath();
-        final AbstractVcs vcsFor = vcsManager.getVcsFor(new LocalFilePath(Objects.requireNonNull(projectDir), true));
-        if (vcsFor == null) return;
-        final Set<ReviewItem> reviewItems = review.getReviewItems();
-        final Set<String> loadedRevisions = new HashSet<String>();
+    ApplicationManager.getApplication().invokeLater(() -> {
+      final List<CommittedChangeList> list = new ArrayList<>();
+      final ProjectLevelVcsManager vcsManager = ProjectLevelVcsManager.getInstance(myProject);
+      final String projectDir = myProject.getBasePath();
+      final AbstractVcs vcsFor = vcsManager.getVcsFor(new LocalFilePath(Objects.requireNonNull(projectDir), true));
+      if (vcsFor == null) return;
+      final Set<ReviewItem> reviewItems = review.getReviewItems();
+      final Set<String> loadedRevisions = new HashSet<>();
 
-        final Map<String, VirtualFile> hash = CrucibleManager.getInstance(myProject).getRepoHash();
-        for (ReviewItem reviewItem : reviewItems) {
-          final String root = hash.containsKey(reviewItem.getRepo()) ? hash.get(reviewItem.getRepo()).getPath() : projectDir;
-          try {
-            list.addAll(reviewItem.loadChangeLists(myProject, vcsFor, loadedRevisions, VcsUtil.getFilePath(root)));
-          }
-          catch (VcsException e) {
-            LOG.error(e);
-          }
+      final Map<String, VirtualFile> hash = CrucibleManager.getInstance(myProject).getRepoHash();
+      for (ReviewItem reviewItem : reviewItems) {
+        final String root = hash.containsKey(reviewItem.getRepo()) ? hash.get(reviewItem.getRepo()).getPath() : projectDir;
+        try {
+          list.addAll(reviewItem.loadChangeLists(myProject, vcsFor, loadedRevisions, VcsUtil.getFilePath(root)));
         }
-        details.updateCommitsList(list);
-        details.setBusy(false);
-
+        catch (VcsException e) {
+          LOG.error(e);
+        }
       }
+      details.updateCommitsList(list);
+      details.setBusy(false);
+
     }, ModalityState.stateForComponent(toolWindow.getComponent()));
   }
 

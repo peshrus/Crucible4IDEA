@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
  * <p/>
  * Show comments for file
  */
-@SuppressWarnings("ComponentNotRegistered")
 public class ShowFileCommentsAction extends AnAction implements DumbAware {
   private final Comment myComment;
   private final Review myReview;

@@ -1,5 +1,4 @@
 import com.intellij.mock.MockProject;
-import com.intellij.openapi.Disposable;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.UsefulTestCase;
 import com.jetbrains.crucible.connection.CrucibleSession;
@@ -25,10 +24,7 @@ public class ParsingTest extends UsefulTestCase {
   protected void setUp() throws Exception {
     super.setUp();
 
-    myProject = new MockProject(null, new Disposable() {
-      @Override
-      public void dispose() {
-      }
+    myProject = new MockProject(null, () -> {
     });
   }
 

@@ -15,7 +15,7 @@ import java.util.List;
 public class CrucibleRootNode extends SimpleNode {
   private static final String NAME = "All My Reviews";
   private final CrucibleReviewModel myReviewModel;
-  private final List<SimpleNode> myChildren = new ArrayList<SimpleNode>();
+  private final List<SimpleNode> myChildren = new ArrayList<>();
 
   public CrucibleRootNode(@NotNull final CrucibleReviewModel reviewModel) {
     myReviewModel = reviewModel;
@@ -27,12 +27,13 @@ public class CrucibleRootNode extends SimpleNode {
     return NAME;
   }
 
+  @NotNull
   @Override
   public SimpleNode[] getChildren() {
     if (myChildren.isEmpty()) {
       addChildren();
     }
-    return myChildren.toArray(new SimpleNode[myChildren.size()]);
+    return myChildren.toArray(new SimpleNode[0]);
   }
 
   private void addChildren() {

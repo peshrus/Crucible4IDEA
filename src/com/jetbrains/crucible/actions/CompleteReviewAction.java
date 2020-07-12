@@ -17,12 +17,13 @@ import com.jetbrains.crucible.ui.toolWindow.CruciblePanel;
 import com.jetbrains.crucible.utils.CrucibleBundle;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 /**
  * User: ktisha
  * <p/>
  * Complete current review
  */
-@SuppressWarnings("ComponentNotRegistered")
 public class CompleteReviewAction extends AnActionButton implements DumbAware {
 
   private final Review myReview;
@@ -37,7 +38,7 @@ public class CompleteReviewAction extends AnActionButton implements DumbAware {
     if (project == null) return;
     CrucibleManager.getInstance(project).completeReview(myReview.getPermaId());
     final ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(CrucibleBundle.message("crucible.toolwindow.id"));
-    final ContentManager contentManager = toolWindow.getContentManager();
+    final ContentManager contentManager = Objects.requireNonNull(toolWindow).getContentManager();
     final Content foundContent = contentManager.findContent("Details for " + myReview.getPermaId());
     contentManager.removeContent(foundContent, true);
 

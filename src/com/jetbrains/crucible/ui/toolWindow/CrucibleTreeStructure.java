@@ -16,6 +16,7 @@ public class CrucibleTreeStructure extends SimpleTreeStructure {
     myRootElement = root;
   }
 
+  @NotNull
   public SimpleNode getRootElement() {
     return myRootElement;
   }

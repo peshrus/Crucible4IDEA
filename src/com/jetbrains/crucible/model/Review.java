@@ -1,7 +1,6 @@
 package com.jetbrains.crucible.model;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
@@ -17,14 +16,14 @@ import java.util.*;
  * User : ktisha
  */
 public class Review extends BasicReview {
-  private final List<Comment> myGeneralComments = new ArrayList<Comment>();
-  private final List<Comment> myComments = new ArrayList<Comment>();
+  private final List<Comment> myGeneralComments = new ArrayList<>();
+  private final List<Comment> myComments = new ArrayList<>();
 
-  private final Set<ReviewItem> myItems = new HashSet<ReviewItem>();
+  private final Set<ReviewItem> myItems = new HashSet<>();
 
   public Review(@NotNull final String id, @NotNull final User author,
                 @Nullable final User moderator) {
-    super(id, author, moderator);
+    super(id, author);
   }
 
   public void addGeneralComment(@NotNull Comment generalComment) {
@@ -80,11 +79,6 @@ public class Review extends BasicReview {
 
   public boolean isInPatch(@NotNull Comment comment) {
     final String reviewItemId = comment.getReviewItemId();
-    return null != ContainerUtil.find(myItems, new Condition<ReviewItem>() {
-      @Override
-      public boolean value(ReviewItem item) {
-        return item.getId().equalsIgnoreCase(reviewItemId) && item.isPatch();
-      }
-    });
+    return null != ContainerUtil.find(myItems, item -> item.getId().equalsIgnoreCase(reviewItemId) && item.isPatch());
   }
 }

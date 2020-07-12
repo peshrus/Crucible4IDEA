@@ -1,6 +1,5 @@
 package com.jetbrains.crucible.configuration;
 
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -14,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * User: ktisha
@@ -34,13 +31,10 @@ public class CrucibleConfigurable implements SearchableConfigurable {
   public CrucibleConfigurable() {
     myCrucibleSettings = CrucibleSettings.getInstance();
 
-    myTestButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        saveSettings();
-        final Task.Modal testConnectionTask = new CrucibleTestConnectionTask(ProjectManager.getInstance().getDefaultProject());
-        ProgressManager.getInstance().run(testConnectionTask);
-      }
+    myTestButton.addActionListener(e -> {
+      saveSettings();
+      final Task.Modal testConnectionTask = new CrucibleTestConnectionTask(ProjectManager.getInstance().getDefaultProject());
+      ProgressManager.getInstance().run(testConnectionTask);
     }
     );
 
@@ -113,7 +107,7 @@ public class CrucibleConfigurable implements SearchableConfigurable {
   }
 
   @Override
-  public void apply() throws ConfigurationException {
+  public void apply() {
     saveSettings();
   }
 

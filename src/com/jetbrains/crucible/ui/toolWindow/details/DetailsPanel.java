@@ -31,14 +31,13 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * User: ktisha
@@ -80,7 +79,7 @@ public class DetailsPanel extends SimpleToolWindowPanel {
 
   // Make changes available for diff action
   @Nullable
-  public Object getData(@NonNls String dataId) {
+  public Object getData(@NotNull @NonNls String dataId) {
     TypeSafeDataProviderAdapter adapter = new TypeSafeDataProviderAdapter(myChangesBrowser);
     Object data = adapter.getData(dataId);
     return data != null ? data : super.getData(dataId);
@@ -152,13 +151,14 @@ public class DetailsPanel extends SimpleToolWindowPanel {
   @NotNull
   private JPanel createCommitsPane() {
     @SuppressWarnings("UseOfObsoleteCollectionType")
-    final Vector<String> commitColumnNames = new Vector<String>();
+    final Vector<String> commitColumnNames = new Vector<>();
     commitColumnNames.add(CrucibleBundle.message("crucible.commit"));
     commitColumnNames.add(CrucibleBundle.message("crucible.author"));
     commitColumnNames.add(CrucibleBundle.message("crucible.date"));
 
-    //noinspection UseOfObsoleteCollectionType
-    myCommitsModel = new DefaultTableModel(new Vector(), commitColumnNames) {
+    myCommitsModel = new DefaultTableModel(new Vector<Vector<CommittedChangeList>>(), commitColumnNames) {
+      private static final long serialVersionUID = 6903796685754374688L;
+
       @Override
       public boolean isCellEditable(int row, int column) {
         return false;
@@ -214,18 +214,17 @@ public class DetailsPanel extends SimpleToolWindowPanel {
     myChangesBrowser.getDiffAction().registerCustomShortcutSet(CommonShortcuts.getDiff(), myCommitsTable);
     myChangesBrowser.getViewer().setBorder(IdeBorderFactory.createBorder(SideBorder.LEFT | SideBorder.TOP));
 
-    myCommitsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-        final int[] indices = myCommitsTable.getSelectedRows();
-        List<Change> changes = new ArrayList<Change>();
-        for (int i : indices) {
-          changes.addAll(((CommittedChangeList)myCommitsModel.getValueAt(i, 0)).getChanges());
-        }
-        myChangesBrowser.setChangesToDisplay(changes);
-      }
-    });
+    myCommitsTable.getSelectionModel().addListSelectionListener(this::valueChanged);
     return myChangesBrowser;
+  }
+
+  private void valueChanged(ListSelectionEvent e) {
+    final int[] indices = myCommitsTable.getSelectedRows();
+    List<Change> changes = new ArrayList<>();
+    for (int i : indices) {
+      changes.addAll(((CommittedChangeList)myCommitsModel.getValueAt(i, 0)).getChanges());
+    }
+    myChangesBrowser.setChangesToDisplay(changes);
   }
 
 
@@ -250,7 +249,7 @@ public class DetailsPanel extends SimpleToolWindowPanel {
   class MyChangesBrowser extends ChangesBrowser {
     public MyChangesBrowser(Project project) {
       super(project, Collections.<CommittedChangeList>emptyList(),
-            Collections.<Change>emptyList(), null, false, false, null,
+            Collections.emptyList(), null, false, false, null,
             ChangesBrowser.MyUseCase.COMMITTED_CHANGES, null);
     }
 
@@ -268,10 +267,10 @@ public class DetailsPanel extends SimpleToolWindowPanel {
     }
 
     @Override
-    public void calcData(DataKey key, DataSink sink) {
+    public void calcData(@NotNull DataKey key, @NotNull DataSink sink) {
       if (key == VcsDataKeys.SELECTED_CHANGES) {
         final List<Change> list = myViewer.getSelectedChanges();
-        sink.put(VcsDataKeys.SELECTED_CHANGES, list.toArray(new Change[list.size()]));
+        sink.put(VcsDataKeys.SELECTED_CHANGES, list.toArray(new Change[0]));
       }
       super.calcData(key, sink);
     }
@@ -284,12 +283,12 @@ public class DetailsPanel extends SimpleToolWindowPanel {
 
   private class ShowGeneralCommentsAction extends AnActionButton {
     public ShowGeneralCommentsAction() {
-      super(CrucibleBundle.message("crucible.show.general.comments"), CrucibleBundle.message("crucible.show.general.comments"),
+      super(CrucibleBundle.message("crucible.show.general.comments.title"), CrucibleBundle.message("crucible.show.general.comments.description"),
             AllIcons.Actions.Preview);
     }
 
     @Override
-    public void actionPerformed(AnActionEvent e) {
+    public void actionPerformed(@NotNull AnActionEvent e) {
       boolean visibility = !myCommentsPane.isVisible();
       myCommentsPane.setVisible(visibility);
       PropertiesComponent.getInstance().setValue(GENERAL_COMMENTS_VISIBILITY_PROPERTY, Boolean.toString(visibility));

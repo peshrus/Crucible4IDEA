@@ -9,6 +9,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -29,7 +30,7 @@ public class CrucibleSettings implements PersistentStateComponent<CrucibleSettin
   }
 
   @Override
-  public void loadState(CrucibleSettings state) {
+  public void loadState(@NotNull CrucibleSettings state) {
     XmlSerializerUtil.copyBean(state, this);
   }
 

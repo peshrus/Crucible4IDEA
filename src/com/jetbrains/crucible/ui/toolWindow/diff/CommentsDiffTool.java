@@ -41,7 +41,7 @@ public class CommentsDiffTool implements FrameDiffTool, SuppressiveDiffTool {
 
   @Override
   public List<Class<? extends DiffTool>> getSuppressedTools() {
-    return Collections.<Class<? extends DiffTool>>singletonList(SimpleDiffTool.class);
+    return Collections.singletonList(SimpleDiffTool.class);
   }
 
   @Override

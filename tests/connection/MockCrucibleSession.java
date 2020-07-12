@@ -17,7 +17,7 @@ import java.io.*;
  *
  */
 public class MockCrucibleSession extends CrucibleSessionImpl {
-  private String myName;
+  private final String myName;
 
   public MockCrucibleSession(@NotNull Project project, String name) {
     super(project);
@@ -91,13 +91,13 @@ public class MockCrucibleSession extends CrucibleSessionImpl {
 
       @NotNull
       @Override
-      public OutputStream getOutputStream(Object requestor, long newModificationStamp, long newTimeStamp) throws IOException {
+      public OutputStream getOutputStream(Object requestor, long newModificationStamp, long newTimeStamp) {
         return null;
       }
 
       @NotNull
       @Override
-      public byte[] contentsToByteArray() throws IOException {
+      public byte[] contentsToByteArray() {
         return new byte[0];
       }
 
@@ -116,7 +116,7 @@ public class MockCrucibleSession extends CrucibleSessionImpl {
       }
 
       @Override
-      public InputStream getInputStream() throws IOException {
+      public InputStream getInputStream() {
         return null;
       }
     };

@@ -3,12 +3,10 @@ package com.jetbrains.crucible.model;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.AbstractVcs;
 import com.intellij.openapi.vcs.FilePath;
-import com.intellij.openapi.vcs.VcsException;
 import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.patch.AbstractFilePatchInProgress;
 import com.intellij.openapi.vcs.versionBrowser.CommittedChangeList;
 import com.intellij.openapi.vcs.versionBrowser.CommittedChangeListImpl;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,10 +22,10 @@ import java.util.Set;
 public class PatchReviewItem extends ReviewItem {
 
   @NotNull private final List<AbstractFilePatchInProgress> myPatches;
-  @NotNull private String myName;
-  @NotNull private String myComment;
-  @NotNull private String myAuthorName;
-  @NotNull private Date myDate;
+  @NotNull private final String myName;
+  @NotNull private final String myComment;
+  @NotNull private final String myAuthorName;
+  @NotNull private final Date myDate;
 
   public PatchReviewItem(@NotNull String id, @NotNull String path,
                          @Nullable String repoName, @NotNull List<AbstractFilePatchInProgress> patches,
@@ -43,12 +41,12 @@ public class PatchReviewItem extends ReviewItem {
   @NotNull
   @Override
   public List<CommittedChangeList> loadChangeLists(@NotNull Project project, @NotNull AbstractVcs vcsFor,
-                                                   @NotNull Set<String> loadedRevisions, FilePath path) throws VcsException {
+                                                   @NotNull Set<String> loadedRevisions, FilePath path) {
     if (loadedRevisions.contains(myName)) {
       return Collections.emptyList();
     }
     loadedRevisions.add(myName);
-    return Collections.<CommittedChangeList>singletonList(
+    return Collections.singletonList(
       new CommittedChangeListImpl(myName, myComment, myAuthorName, -1, myDate, getChanges(myPatches)));
   }
 
@@ -59,12 +57,7 @@ public class PatchReviewItem extends ReviewItem {
 
   @NotNull
   private List<Change> getChanges(@NotNull List<AbstractFilePatchInProgress> patches) {
-    return ContainerUtil.map(patches, new Function<AbstractFilePatchInProgress, Change>() {
-      @Override
-      public Change fun(AbstractFilePatchInProgress patch) {
-        return patch.getChange();
-      }
-    });
+    return ContainerUtil.map(patches, AbstractFilePatchInProgress::getChange);
   }
 
 }

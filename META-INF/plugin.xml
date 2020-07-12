@@ -1,4 +1,4 @@
-<idea-plugin version="2">
+<idea-plugin>
   <id>codeReview4idea</id>
   <name>Code Review for IntelliJ IDEA</name>
   <version>0.5.8</version>
@@ -157,7 +157,6 @@
   <depends>com.intellij.modules.lang</depends>
   -->
   <depends>com.intellij.modules.platform</depends>
-  <depends>Git4Idea</depends>
   <application-components>
     <!-- Add your application components here -->
   </application-components>
@@ -168,10 +167,10 @@
   <extensions defaultExtensionNs="com.intellij">
     <applicationConfigurable instance="com.jetbrains.crucible.configuration.CrucibleConfigurable"
                              id="com.jetbrains.crucible.configuration.CrucibleConfigurable" displayName="Code Review"/>
-    <applicationService serviceInterface="com.jetbrains.crucible.configuration.CrucibleSettings"
-                        serviceImplementation="com.jetbrains.crucible.configuration.CrucibleSettings"/>
-    <projectService serviceInterface="com.jetbrains.crucible.connection.CrucibleManager"
-                    serviceImplementation="com.jetbrains.crucible.connection.CrucibleManager" />
+    <applicationService
+        serviceImplementation="com.jetbrains.crucible.configuration.CrucibleSettings"/>
+    <projectService
+        serviceImplementation="com.jetbrains.crucible.connection.CrucibleManager" />
     <diff.DiffTool implementation="com.jetbrains.crucible.ui.toolWindow.diff.CommentsDiffTool"/>
 
     <toolWindow id="Code Review" icon="/images/paw_orange.png" anchor="bottom" canCloseContents="true" factoryClass="com.jetbrains.crucible.ui.toolWindow.CrucibleToolWindowFactory"/>

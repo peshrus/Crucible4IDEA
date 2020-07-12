@@ -19,7 +19,10 @@ import com.intellij.ui.AnActionButton;
 import com.intellij.ui.table.JBTable;
 import com.jetbrains.crucible.model.Comment;
 import com.jetbrains.crucible.model.Review;
-import com.jetbrains.crucible.ui.toolWindow.details.*;
+import com.jetbrains.crucible.ui.toolWindow.details.CommentBalloonBuilder;
+import com.jetbrains.crucible.ui.toolWindow.details.CommentForm;
+import com.jetbrains.crucible.ui.toolWindow.details.CommentsTree;
+import com.jetbrains.crucible.ui.toolWindow.details.GeneralCommentsTree;
 import com.jetbrains.crucible.ui.toolWindow.diff.ReviewGutterIconRenderer;
 import com.jetbrains.crucible.utils.CrucibleBundle;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +39,6 @@ import javax.swing.tree.TreePath;
  * <p/>
  * Reply to comment
  */
-@SuppressWarnings("ComponentNotRegistered")
 public class AddCommentAction extends AnActionButton implements DumbAware {
 
   private final Editor myEditor;
@@ -84,14 +86,18 @@ public class AddCommentAction extends AnActionButton implements DumbAware {
       else return;
     }
 
-    final JBPopup balloon = CommentBalloonBuilder.getNewCommentBalloon(commentForm, myIsReply ? CrucibleBundle
-      .message("crucible.new.reply.$0", commentForm.getParentComment().getPermId()) :
-                                                                                    CrucibleBundle
-                                                                                      .message("crucible.new.comment.$0",
-                                                                                               myReview.getPermaId()));
+    final JBPopup balloon =
+      CommentBalloonBuilder.getNewCommentBalloon(commentForm, myIsReply
+                                                              ? CrucibleBundle
+                                                                .message("crucible.new.reply.$0",
+                                                                         commentForm.getParentComment() != null ? commentForm
+                                                                           .getParentComment().getPermId() : null)
+                                                              : CrucibleBundle
+                                                                .message("crucible.new.comment.$0",
+                                                                         myReview.getPermaId()));
     balloon.addListener(new JBPopupListener() {
       @Override
-      public void onClosed(LightweightWindowEvent event) {
+      public void onClosed(@NotNull LightweightWindowEvent event) {
         if(!commentForm.getText().isEmpty()) { // do not try to save draft if text is empty
           commentForm.postComment();
         }
@@ -126,7 +132,7 @@ public class AddCommentAction extends AnActionButton implements DumbAware {
                                                                                       .message("crucible.new.comment.$0", myFilePath));
     balloon.addListener(new JBPopupListener() {
       @Override
-      public void onClosed(LightweightWindowEvent event) {
+      public void onClosed(@NotNull LightweightWindowEvent event) {
         final Comment comment = commentForm.postComment();
         if (!myIsReply) {
           final MarkupModel markup = myEditor.getMarkupModel();

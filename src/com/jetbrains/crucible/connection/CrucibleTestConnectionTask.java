@@ -49,21 +49,14 @@ public class CrucibleTestConnectionTask extends Task.Modal {
     CrucibleTestConnector.ConnectionState state = connector.getConnectionState();
     switch (state) {
       case FAILED:
-        EventQueue.invokeLater(new Runnable() {
-          public void run() {
-            Messages.showDialog(myProject, "Reason:  " + connector.getErrorMessage(), "Connection Failed", new String[]{"Ok"}, 0, null);
-          }
-        });
+        EventQueue.invokeLater(
+          () -> Messages.showDialog(myProject, "Reason:  " + connector.getErrorMessage(), "Connection Failed", new String[]{"Ok"}, 0, null));
         break;
       case INTERRUPTED:
         LOG.debug("'Test Connection' canceled");
         break;
       case SUCCEEDED:
-        EventQueue.invokeLater(new Runnable() {
-          public void run() {
-            Messages.showDialog(myProject, "Connected successfully", "Connection OK", new String[]{"Ok"}, 0, null);
-          }
-        });
+        EventQueue.invokeLater(() -> Messages.showDialog(myProject, "Connected successfully", "Connection OK", new String[]{"Ok"}, 0, null));
         break;
       default: //NOT_FINISHED:
         LOG.warn("Unexpected 'Test Connection' state: "

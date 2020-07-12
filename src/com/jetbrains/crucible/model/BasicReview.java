@@ -2,7 +2,6 @@
 package com.jetbrains.crucible.model;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -12,20 +11,17 @@ import java.util.Set;
  * User : ktisha
  */
 public class BasicReview {
-  private Set<User> myReviewers = new HashSet<User>();
+  private final Set<User> myReviewers = new HashSet<>();
   private final User myAuthor;
   private String myDescription;
-  private final User myModerator;
 
   private final String myPermaId;
   private Date myCreateDate;
   private String myState;
 
-  public BasicReview(@NotNull final String permaId, @NotNull final User author,
-                     @Nullable final User moderator) {
+  public BasicReview(@NotNull final String permaId, @NotNull final User author) {
     myPermaId = permaId;
     myAuthor = author;
-    myModerator = moderator;
   }
 
   @Override

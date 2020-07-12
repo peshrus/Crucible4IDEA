@@ -15,6 +15,7 @@ import java.util.List;
  * User: ktisha
  */
 public class CrucibleReviewModel extends DefaultTableModel {
+  private static final long serialVersionUID = -6332370407944893458L;
   private final Project myProject;
 
   public CrucibleReviewModel(Project project) {

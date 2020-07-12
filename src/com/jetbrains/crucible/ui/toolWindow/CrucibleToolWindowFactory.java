@@ -8,6 +8,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.jetbrains.crucible.utils.CrucibleBundle;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * User: ktisha
@@ -15,7 +16,7 @@ import com.jetbrains.crucible.utils.CrucibleBundle;
 public class CrucibleToolWindowFactory implements ToolWindowFactory, DumbAware {
 
   @Override
-  public void createToolWindowContent(Project project, ToolWindow toolWindow) {
+  public void createToolWindowContent(@NotNull Project project, ToolWindow toolWindow) {
     final ContentManager contentManager = toolWindow.getContentManager();
     final CruciblePanel cruciblePanel = new CruciblePanel(project);
     final Content content = ContentFactory.SERVICE.getInstance().

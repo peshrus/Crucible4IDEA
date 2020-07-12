@@ -2,7 +2,6 @@ package com.jetbrains.crucible.ui.toolWindow.details;
 
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vcs.FilePath;
@@ -18,7 +17,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
@@ -27,7 +29,6 @@ import java.awt.event.MouseEvent;
  */
 public abstract class CommentsTree extends Tree {
 
-  private static final Logger LOG = Logger.getInstance(CommentsTree.class);
   @NotNull protected final Review myReview;
 
   protected CommentsTree(@NotNull final Project project, @NotNull final Review review, @NotNull DefaultTreeModel model,
@@ -36,7 +37,7 @@ public abstract class CommentsTree extends Tree {
     myReview = review;
     setExpandableItemsEnabled(false);
     setRowHeight(0);
-    final CommentNodeRenderer renderer = new CommentNodeRenderer(this, review, project);
+    final CommentNodeRenderer renderer = new CommentNodeRenderer(this);
     setCellRenderer(renderer);
     getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
@@ -73,7 +74,7 @@ public abstract class CommentsTree extends Tree {
 
   public abstract void refresh();
 
-  private class MyLinkMouseListener extends LinkMouseListenerBase {
+  private class MyLinkMouseListener extends LinkMouseListenerBase<CommentAction> {
     private final CommentNodeRenderer myRenderer;
     private final Project myProject;
     private final Review myReview;
@@ -85,22 +86,16 @@ public abstract class CommentsTree extends Tree {
     }
 
     @Override
-    protected void handleTagClick(Object tag, MouseEvent event) {
+    protected void handleTagClick(CommentAction tag, @NotNull MouseEvent event) {
       if (tag == null) {
         return;
       }
-      CommentAction action = (CommentAction)tag;
-      action.execute(new Runnable() {
-        @Override
-        public void run() {
-          refresh();
-        }
-      });
+      tag.execute(CommentsTree.this::refresh);
     }
 
     @Nullable
     @Override
-    protected Object getTagAt(MouseEvent e) {
+    protected CommentAction getTagAt(MouseEvent e) {
       JTree tree = (JTree) e.getSource();
       final TreePath path = tree.getPathForLocation(e.getX(), e.getY());
       if (path == null) {

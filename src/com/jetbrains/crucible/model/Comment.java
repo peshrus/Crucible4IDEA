@@ -20,7 +20,7 @@ public class Comment {
   private String myPermId;
   private String myRevision;
   private Date myCreateDate = new Date();
-  private final List<Comment> myReplies = new ArrayList<Comment>();
+  private final List<Comment> myReplies = new ArrayList<>();
   private String myParentCommentId;
 
   public Comment(@NotNull final User commentAuthor, @NotNull final String message, boolean draft) {

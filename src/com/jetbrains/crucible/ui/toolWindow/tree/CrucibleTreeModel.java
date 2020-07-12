@@ -8,6 +8,8 @@ import javax.swing.tree.DefaultTreeModel;
  */
 public class CrucibleTreeModel extends DefaultTreeModel {
 
+  private static final long serialVersionUID = 5620411240137609373L;
+
   public CrucibleTreeModel() {
     super(new DefaultMutableTreeNode(), false);
   }

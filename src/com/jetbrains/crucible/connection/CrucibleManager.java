@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class CrucibleManager {
   private final Project myProject;
-  private final Map<String, CrucibleSession> mySessions = new HashMap<String, CrucibleSession>();
+  private final Map<String, CrucibleSession> mySessions = new HashMap<>();
 
   private static final Logger LOG = Logger.getInstance(CrucibleManager.class.getName());
 
@@ -52,11 +52,7 @@ public class CrucibleManager {
         return session.getReviewsForFilter(filter);
       }
     }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-      UiUtils.showBalloon(myProject, CrucibleBundle.message("crucible.connection.error.message.$0", e.getMessage()), MessageType.ERROR);
-    }
-    catch (CrucibleApiException e) {
+    catch (IOException | CrucibleApiException e) {
       LOG.warn(e.getMessage());
       UiUtils.showBalloon(myProject, CrucibleBundle.message("crucible.connection.error.message.$0", e.getMessage()), MessageType.ERROR);
     }
@@ -71,14 +67,10 @@ public class CrucibleManager {
         return session.getDetailsForReview(permId);
       }
     }
-    catch (CrucibleApiException e) {
+    catch (CrucibleApiException | IOException e) {
       LOG.warn(e.getMessage());
       UiUtils.showBalloon(myProject, CrucibleBundle.message("crucible.connection.error.message.$0", e.getMessage()), MessageType.ERROR);
 
-    }
-    catch (IOException e) {
-      LOG.warn(e.getMessage());
-      UiUtils.showBalloon(myProject, CrucibleBundle.message("crucible.connection.error.message.$0", e.getMessage()), MessageType.ERROR);
     }
     return null;
   }

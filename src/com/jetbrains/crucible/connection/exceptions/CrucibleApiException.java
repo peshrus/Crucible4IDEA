@@ -5,6 +5,8 @@ package com.jetbrains.crucible.connection.exceptions;
  */
 public class CrucibleApiException extends Exception {
 
+  private static final long serialVersionUID = -7897185855353636259L;
+
   public CrucibleApiException(String message) {
     super(message);
   }

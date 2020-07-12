@@ -23,6 +23,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -39,7 +40,7 @@ public class CommentForm extends JPanel {
   @NotNull private final Project myProject;
   private final boolean myGeneral;
   private final boolean myReply;
-  @Nullable private FilePath myFilePath;
+  @Nullable private final FilePath myFilePath;
 
   private boolean myOK;
 
@@ -72,6 +73,8 @@ public class CommentForm extends JPanel {
     myReviewTextField.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).
       put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.CTRL_DOWN_MASK), "postComment");
     myReviewTextField.getActionMap().put("postComment", new AbstractAction() {
+      private static final long serialVersionUID = -9203776778036691628L;
+
       @Override
       public void actionPerformed(ActionEvent e) {
         myOK = true;
@@ -95,7 +98,7 @@ public class CommentForm extends JPanel {
       final Document document = myEditor.getDocument();
       final int lineNumber = document.getLineNumber(myEditor.getCaretModel().getOffset()) + 1;
       comment.setLine(String.valueOf(lineNumber));
-      final String id = myReview.getIdByPath(myFilePath.getPath(), myProject);
+      final String id = myReview.getIdByPath(Objects.requireNonNull(myFilePath).getPath(), myProject);
       comment.setReviewItemId(id);
     }
 

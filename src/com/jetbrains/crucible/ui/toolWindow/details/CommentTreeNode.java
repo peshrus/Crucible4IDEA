@@ -10,6 +10,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 class CommentTreeNode extends DefaultMutableTreeNode {
 
+  private static final long serialVersionUID = -5930488439576399319L;
+
   public Comment getComment() {
     return myComment;
   }

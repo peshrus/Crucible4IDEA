@@ -2,7 +2,6 @@ package com.jetbrains.crucible.ui.toolWindow.details;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
@@ -14,7 +13,6 @@ import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import com.jetbrains.crucible.model.Comment;
-import com.jetbrains.crucible.model.Review;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,15 +31,11 @@ class CommentNodeRenderer extends JBDefaultTreeCellRenderer {
 
   private static final Logger LOG = Logger.getInstance(CommentNodeRenderer.class);
 
-  @NotNull private final Review myReview;
-  @NotNull private final Project myProject;
   @NotNull private final DefaultTreeCellRenderer myDefaultRenderer = new DefaultTreeCellRenderer();
   @NotNull private final CommentRendererPanel myPanel;
 
-  public CommentNodeRenderer(@NotNull JTree tree, @NotNull Review review, @NotNull Project project) {
+  public CommentNodeRenderer(@NotNull JTree tree) {
     super(tree);
-    myReview = review;
-    myProject = project;
     myPanel = new CommentRendererPanel();
   }
 

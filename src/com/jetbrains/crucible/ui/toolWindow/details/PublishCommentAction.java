@@ -16,7 +16,7 @@ public class PublishCommentAction extends CommentAction {
   private static final Logger LOG = Logger.getInstance(CommentAction.class);
 
   public PublishCommentAction(@NotNull Project project, @NotNull Review review, @NotNull Comment comment) {
-    super(project, review, comment, Type.PUBLISH);
+    super(project, review, comment);
   }
 
   @Override

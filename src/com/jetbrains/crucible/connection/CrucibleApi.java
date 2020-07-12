@@ -8,7 +8,6 @@ import com.intellij.openapi.diff.impl.patch.PatchReader;
 import com.intellij.openapi.diff.impl.patch.PatchSyntaxException;
 import com.intellij.openapi.diff.impl.patch.TextFilePatch;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vcs.LocalFilePath;
 import com.intellij.openapi.vcs.ProjectLevelVcsManager;
 import com.intellij.openapi.vcs.changes.patch.AbstractFilePatchInProgress;
@@ -136,12 +135,7 @@ public class CrucibleApi {
     }
 
     Map.Entry<String, VirtualFile> repoEntry = ContainerUtil.find(crucibleSession.getRepoHash().entrySet(),
-                                                                  new Condition<Map.Entry<String, VirtualFile>>() {
-                                                                    @Override
-                                                                    public boolean value(Map.Entry<String, VirtualFile> entry) {
-                                                                      return entry.getValue().equals(repo);
-                                                                    }
-                                                                  });
+                                                                  entry -> entry.getValue().equals(repo));
 
     if (repoEntry == null) {
       LOG.error("Couldn't find repository name for root " + repo);

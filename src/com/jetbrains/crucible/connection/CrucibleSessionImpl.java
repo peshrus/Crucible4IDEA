@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -44,9 +45,9 @@ public class CrucibleSessionImpl implements CrucibleSession {
   private static final Logger LOG = Logger.getInstance(CrucibleSessionImpl.class.getName());
   private static final int CONNECTION_TIMEOUT = 5000;
 
-  private final Map<String, VirtualFile> myRepoHash = new HashMap<String, VirtualFile>();
+  private final Map<String, VirtualFile> myRepoHash = new HashMap<>();
 
-  private SLRUCache<String, String> myDownloadedFilesCache = new SLRUCache<String, String>(50, 50) {
+  private final SLRUCache<String, String> myDownloadedFilesCache = new SLRUCache<String, String>(50, 50) {
     @NotNull
     @Override
     public String createValue(String relativeUrl) {
@@ -134,17 +135,17 @@ public class CrucibleSessionImpl implements CrucibleSession {
   }
 
   public static String encode(String str2encode) {
-    try {
-      Base64 base64 = new Base64();
-      byte[] bytes = base64.encode(str2encode.getBytes("UTF-8"));
-      return new String(bytes);
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException("UTF-8 is not supported", e);
-    }
+    Base64 base64 = new Base64();
+    byte[] bytes = base64.encode(str2encode.getBytes(StandardCharsets.UTF_8));
+    return new String(bytes);
   }
 
   protected JsonObject buildJsonResponse(@NotNull final String urlString) throws IOException {
     final GetMethod method = new GetMethod(urlString);
+    return buildJsonResponse(method);
+  }
+
+  private JsonObject buildJsonResponse(final HttpMethodBase method) throws IOException {
     executeHttpMethod(method);
 
     final String response = method.getResponseBodyAsString();
@@ -156,6 +157,7 @@ public class CrucibleSessionImpl implements CrucibleSession {
       LOG.error("Malformed Json");
       LOG.error(response);
     }
+
     return new JsonObject();
   }
 
@@ -173,17 +175,7 @@ public class CrucibleSessionImpl implements CrucibleSession {
                                              @NotNull final RequestEntity requestEntity) throws IOException {
     final PostMethod method = new PostMethod(urlString);
     method.setRequestEntity(requestEntity);
-    executeHttpMethod(method);
-
-    final String response = method.getResponseBodyAsString();
-    try {
-      return JsonParser.parseString(response).getAsJsonObject();
-    }
-    catch (JsonSyntaxException ex) {
-      LOG.error("Malformed Json");
-      LOG.error(response);
-    }
-    return new JsonObject();
+    return buildJsonResponse(method);
   }
 
   protected void adjustHttpHeader(@NotNull final HttpMethod method) {
@@ -289,7 +281,7 @@ public class CrucibleSessionImpl implements CrucibleSession {
     if (!StringUtils.isEmpty(urlFilter)) {
       url += "/" + urlFilter;
     }
-    List<BasicReview> reviews = new ArrayList<BasicReview>();
+    List<BasicReview> reviews = new ArrayList<>();
 
     final JsonObject jsonElement = buildJsonResponse(url);
     final JsonArray reviewData = jsonElement.getAsJsonArray("reviewData");
@@ -302,7 +294,7 @@ public class CrucibleSessionImpl implements CrucibleSession {
   }
 
   @Override
-  public String downloadFile(@NotNull String relativeUrl) throws IOException {
+  public String downloadFile(@NotNull String relativeUrl) {
     return myDownloadedFilesCache.get(relativeUrl);
   }
 
